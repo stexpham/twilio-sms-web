@@ -3,6 +3,7 @@ import {useEffect, useState, useCallback} from "react";
 import "./PhoneNumberSelector.css"
 import {useAuthentication} from "../../context/AuthenticationProvider";
 import { getAllTwilioPhoneNumbers } from '../../hook/getTwilioPhoneNumbers';
+import { getAllTwilioSenderIds } from '../../hook/getTwilioSenderIds';
 
 // TODO: Currently, this mask is limited to country code +1; we need a mask for all country codes
 const maskPhoneNumber = v => {
@@ -18,6 +19,12 @@ const PhoneNumberSelector = ({onError = () => {}, onPhoneNumberChange = () => {}
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [phoneNumbers, setPhoneNumbers] = useState([])
+  const [senders, setSenders] = useState([])
+
+  const phoneNumberOptions = phoneNumbers.map(v => ({value: v, label: maskPhoneNumber(v)}))
+  const senderOptions = senders.map(v => ({value: v, label: v}))
+  const senderAndPhoneNumberOptions = [...senderOptions, ...phoneNumberOptions]
+  const placeHolderText = loading ? 'Loading phone numbers...' : 'Select (or type) a phone number...'
 
   const handleOnError = useCallback((err) => {
     setLoading(false)
@@ -39,23 +46,26 @@ const PhoneNumberSelector = ({onError = () => {}, onPhoneNumberChange = () => {}
     setLoading(false)
   }, [setPhoneNumbers, setLoading])
 
-  const phoneNumberOptions = phoneNumbers.map(v => ({value: v, label: maskPhoneNumber(v)}))
-
-  const placeHolderText = loading ? 'Loading phone numbers...' : 'Select (or type) a phone number...'
+  const handleGetSendersSuccess = useCallback((response) => {
+    setSenders(response)
+    getAllTwilioPhoneNumbers(authentication, 50)
+      .then(handleGetPhoneNumberSuccess)
+      .catch(handleOnError)
+  }, [setSenders, authentication, handleGetPhoneNumberSuccess, handleOnError])
 
   // Get available phone number on first render
   useEffect(() => {
     if (phoneNumbers.length === 0 && error == null) {
-      getAllTwilioPhoneNumbers(authentication, 50)
-        .then(handleGetPhoneNumberSuccess)
+      getAllTwilioSenderIds(authentication, 50)
+        .then(handleGetSendersSuccess)
         .catch(handleOnError)
     }
-  }, [phoneNumbers, authentication, error, handleGetPhoneNumberSuccess, handleOnError])
+  }, [phoneNumbers, authentication, error, handleGetSendersSuccess, handleOnError])
 
   return <Select
       placeholder={placeHolderText}
       isLoading={loading}
-      options={phoneNumberOptions}
+      options={senderAndPhoneNumberOptions}
       onChange={handleOnChange}
   />
 }
