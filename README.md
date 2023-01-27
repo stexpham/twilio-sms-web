@@ -44,3 +44,9 @@ We reserve the right to collect analytical data such as visit counts, navigation
 Cost
 ----
 Our website is a user interface for your [Twilio] account. Our product is free of charge; however, our product uses you [Twilio] account to send and read SMS messages, and therefore [Twilio] is going to charge you according to the [Twilio SMS Pricing] applicable for your account.
+
+[Twilio]: https://www.twilio.com/
+[Twilio SMS API]: https://www.twilio.com/docs/sms/api
+[Twilio SMS Pricing]: https://www.twilio.com/pricing
+[Twilio Auth Token]: https://www.twilio.com/docs/iam/api/authtoken
+[Twilio API Key]: https://www.twilio.com/docs/iam/keys/api-key
