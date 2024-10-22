@@ -65,6 +65,10 @@ export const SelectAutoComplete = ({
     }
   }, [value, options])
 
+  useEffect(() => {
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []) 
+
   const handleInputOnKeyDown = ev => {
     if ("ArrowDown" === ev.key) {
       ev.preventDefault()
